@@ -1,7 +1,7 @@
-# NihonRS - Japanese Learning Tool Specification
+# nihon.rs - Japanese Learning Tool Specification
 
 ## Overview
-NihonRS is a Japanese language learning application built with Rust and iced-rs, combining AI-powered tutoring with spaced repetition practice. Users can paste any Japanese text to learn vocabulary and grammar through interactive cards and AI-guided explanations.
+nihon.rs is a Japanese language learning application built with Rust and iced-rs, combining AI-powered tutoring with spaced repetition practice. Users can paste any Japanese text to learn vocabulary and grammar through interactive cards and AI-guided explanations.
 
 ---
 

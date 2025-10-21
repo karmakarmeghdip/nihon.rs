@@ -1,7 +1,7 @@
-# NihonRS - AI Agent Instructions
+# nihon.rs - AI Agent Instructions
 
 ## Project Overview
-NihonRS is a Japanese language learning application built with **Rust** and **iced-rs** (GUI framework). It combines AI-powered tutoring (via LLM) with spaced repetition flashcards for vocabulary and grammar practice.
+nihon.rs is a Japanese language learning application built with **Rust** and **iced-rs** (GUI framework). It combines AI-powered tutoring (via LLM) with spaced repetition flashcards for vocabulary and grammar practice.
 
 ## Architecture Pattern: The Elm Architecture
 
