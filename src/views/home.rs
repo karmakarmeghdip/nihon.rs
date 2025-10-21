@@ -127,10 +127,9 @@ impl HomeView {
         let decks_list = if self.decks.is_empty() {
             column![text("No decks yet. Create one by practicing some text!").size(14)].spacing(5)
         } else {
-            let deck_items = self.decks.iter().fold(column![].spacing(10), |col, deck| {
+            self.decks.iter().fold(column![].spacing(10), |col, deck| {
                 col.push(self.deck_card(deck))
-            });
-            deck_items
+            })
         };
 
         // Saved texts section
@@ -140,13 +139,11 @@ impl HomeView {
             column![text("No saved texts yet. Start learning mode to save texts!").size(14)]
                 .spacing(5)
         } else {
-            let text_items = self
-                .saved_texts
+            self.saved_texts
                 .iter()
                 .fold(column![].spacing(10), |col, text_info| {
                     col.push(self.text_card(text_info))
-                });
-            text_items
+                })
         };
 
         // Settings button
