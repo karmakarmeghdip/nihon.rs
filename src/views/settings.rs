@@ -9,15 +9,12 @@
 
 use crate::constants::{srs, ui};
 use crate::styles;
-use iced::widget::{
-    button, checkbox, column, container, row, scrollable, slider, text, text_input,
-};
+use iced::widget::{button, column, container, row, scrollable, slider, text, text_input};
 use iced::{Element, Length, Task, alignment};
 
 #[derive(Debug, Clone)]
 pub struct SettingsView {
     font_size: u16,
-    dark_mode: bool,
     user_profile: String,
     api_key: String,
     daily_review_limit: String,
@@ -28,7 +25,6 @@ impl Default for SettingsView {
     fn default() -> Self {
         Self {
             font_size: ui::DEFAULT_FONT_SIZE,
-            dark_mode: true,
             user_profile: String::new(),
             api_key: String::new(),
             daily_review_limit: srs::DEFAULT_DAILY_REVIEW_LIMIT.to_string(),
@@ -40,7 +36,6 @@ impl Default for SettingsView {
 #[derive(Debug, Clone)]
 pub enum Message {
     BackToHome,
-    DarkModeChanged(bool),
     FontSizeChanged(u16),
     UserProfileChanged(String),
     ApiKeyChanged(String),
@@ -52,10 +47,6 @@ impl SettingsView {
     pub fn update(&mut self, message: Message) -> Task<Message> {
         match message {
             Message::BackToHome => Task::none(),
-            Message::DarkModeChanged(value) => {
-                self.dark_mode = value;
-                Task::none()
-            }
             Message::FontSizeChanged(size) => {
                 self.font_size = size.clamp(ui::MIN_FONT_SIZE, ui::MAX_FONT_SIZE);
                 Task::none()
@@ -79,17 +70,10 @@ impl SettingsView {
         }
     }
 
-    pub fn set_dark_mode(&mut self, value: bool) {
-        self.dark_mode = value;
-    }
-
     pub fn view(&self) -> Element<'_, Message> {
         let appearance_section = container(
             column![
                 text("Appearance").size(24),
-                checkbox("Use dark theme", self.dark_mode)
-                    .on_toggle(Message::DarkModeChanged)
-                    .style(styles::checkbox_style),
                 column![
                     row![
                         text("Font size:"),

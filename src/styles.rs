@@ -4,7 +4,7 @@
 //! All styles are designed to work with both light (Latte) and dark (Mocha)
 //! Catppuccin themes.
 
-use iced::widget::{button, checkbox, container, slider, text_input};
+use iced::widget::{button, container, slider, text_input};
 use iced::{Background, Border, Color, Shadow, Vector};
 
 /// Catppuccin-inspired button style matching shadcn aesthetics
@@ -169,64 +169,6 @@ pub fn text_input_style(theme: &iced::Theme, status: text_input::Status) -> text
         placeholder: placeholder_color,
         value: value_color,
         selection: selection_color,
-    }
-}
-
-/// Catppuccin-inspired checkbox style matching shadcn aesthetics
-pub fn checkbox_style(theme: &iced::Theme, status: checkbox::Status) -> checkbox::Style {
-    let palette = theme.extended_palette();
-
-    let mut background_color = palette.background.weak.color;
-    let mut icon_color = palette.background.base.text;
-    let mut border_color = palette.background.strong.color.scale_alpha(0.5);
-    let mut text_color = Some(palette.background.base.text);
-
-    let is_checked = match status {
-        checkbox::Status::Active { is_checked }
-        | checkbox::Status::Hovered { is_checked }
-        | checkbox::Status::Disabled { is_checked } => is_checked,
-    };
-
-    match status {
-        checkbox::Status::Active { .. } => {
-            if is_checked {
-                background_color = palette.primary.strong.color;
-                border_color = palette.primary.strong.color;
-                icon_color = palette.primary.strong.text;
-            }
-        }
-        checkbox::Status::Hovered { .. } => {
-            background_color = mix_colors(
-                palette.background.weak.color,
-                palette.primary.strong.color,
-                if is_checked { 0.45 } else { 0.2 },
-            );
-            border_color = palette.primary.strong.color;
-            if is_checked {
-                icon_color = palette.primary.strong.text;
-            }
-        }
-        checkbox::Status::Disabled { .. } => {
-            text_color = text_color.map(|color| color.scale_alpha(0.5));
-            border_color = border_color.scale_alpha(0.3);
-            icon_color = icon_color.scale_alpha(0.35);
-            background_color = mix_colors(
-                palette.background.weak.color,
-                palette.background.strong.color,
-                if is_checked { 0.3 } else { 0.1 },
-            );
-        }
-    }
-
-    checkbox::Style {
-        background: Background::Color(background_color),
-        icon_color,
-        border: Border {
-            color: border_color,
-            width: 1.0,
-            radius: iced::border::Radius::from(6.0),
-        },
-        text_color,
     }
 }
 

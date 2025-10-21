@@ -6,7 +6,6 @@
 
 use iced::{Element, Task};
 
-use crate::theme::AppTheme;
 use crate::views::{
     home::HomeView, learning::LearningView, practice::PracticeView, settings::SettingsView,
 };
@@ -25,7 +24,6 @@ pub struct App {
     practice_view: PracticeView,
     learning_view: LearningView,
     settings_view: SettingsView,
-    theme: AppTheme,
 }
 
 #[derive(Debug, Clone)]
@@ -51,7 +49,6 @@ impl Default for App {
             practice_view: PracticeView::default(),
             learning_view: LearningView::default(),
             settings_view: SettingsView::default(),
-            theme: AppTheme::default(),
         }
     }
 }
@@ -63,15 +60,15 @@ impl App {
 
     pub fn title(&self) -> String {
         match self.mode {
-            AppMode::Home => "NihonRS - Home".to_string(),
-            AppMode::Practice => "NihonRS - Practice".to_string(),
-            AppMode::Learning => "NihonRS - Learning".to_string(),
-            AppMode::Settings => "NihonRS - Settings".to_string(),
+            AppMode::Home => "nihon.rs - Home".to_string(),
+            AppMode::Practice => "nihon.rs - Practice".to_string(),
+            AppMode::Learning => "nihon.rs - Learning".to_string(),
+            AppMode::Settings => "nihon.rs - Settings".to_string(),
         }
     }
 
     pub fn theme(&self) -> iced::Theme {
-        self.theme.to_iced_theme()
+        crate::theme::get_theme()
     }
 
     pub fn update(&mut self, message: Message) -> Task<Message> {
@@ -84,10 +81,6 @@ impl App {
     }
 
     fn navigate_to(&mut self, mode: AppMode) {
-        // Sync theme state when navigating to settings
-        if mode == AppMode::Settings {
-            self.settings_view.set_dark_mode(self.theme.is_dark());
-        }
         self.mode = mode;
     }
 
@@ -148,10 +141,6 @@ impl App {
                 self.navigate_to(AppMode::Home);
                 task
             }
-            SettingsMessage::DarkModeChanged(enabled) => {
-                self.apply_theme(enabled);
-                task
-            }
             _ => task,
         }
     }
@@ -170,14 +159,5 @@ impl App {
             .height(Length::Fill)
             .center_x(Fill)
             .into()
-    }
-
-    fn apply_theme(&mut self, dark_mode: bool) {
-        self.theme = if dark_mode {
-            AppTheme::Dark
-        } else {
-            AppTheme::Light
-        };
-        self.settings_view.set_dark_mode(dark_mode);
     }
 }
