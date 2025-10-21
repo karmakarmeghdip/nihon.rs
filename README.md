@@ -44,8 +44,8 @@ nihon.rs will help learners:
 
 ```bash
 # Clone the repository
-git clone https://github.com/yourusername/nihonrs.git
-cd nihonrs
+git clone https://github.com/karmakarmeghdip/nihon.rs.git
+cd nihon.rs
 
 # Build and run
 cargo run
@@ -66,7 +66,7 @@ Perfect for beginners:
 - ✅ **Testing**: Write unit tests for existing functions
 - 🎭 **Styling**: Enhance theme colors, improve spacing
 
-Check out our [issues labeled `good first issue`](https://github.com/yourusername/nihonrs/labels/good%20first%20issue)!
+Check out our [issues labeled `good first issue`](https://github.com/karmakarmeghdip/nihon.rs/labels/good%20first%20issue)!
 
 ### 💪 More Challenging Tasks
 
@@ -159,8 +159,8 @@ We follow standard Rust conventions:
 
 ### Getting Help
 
-- 💬 Open a [discussion](https://github.com/yourusername/nihonrs/discussions) for questions
-- 🐛 Report bugs via [issues](https://github.com/yourusername/nihonrs/issues)
+- 💬 Open a [discussion](https://github.com/karmakarmeghdip/nihon.rs/discussions) for questions
+- 🐛 Report bugs via [issues](https://github.com/karmakarmeghdip/nihon.rs/issues)
 - 📧 Reach out to maintainers directly (see `Cargo.toml` for contacts)
 
 ## 🎯 Roadmap

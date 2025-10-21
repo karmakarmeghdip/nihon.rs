@@ -21,11 +21,11 @@ Be kind, respectful, and constructive. We're all here to learn and build somethi
 
 ```bash
 # Fork the repository on GitHub, then clone your fork
-git clone https://github.com/YOUR_USERNAME/nihonrs.git
-cd nihonrs
+git clone https://github.com/YOUR_USERNAME/nihon.rs.git
+cd nihon.rs
 
 # Add upstream remote to stay synced
-git remote add upstream https://github.com/ORIGINAL_OWNER/nihonrs.git
+git remote add upstream https://github.com/karmakarmeghdip/nihon.rs.git
 
 # Install dependencies and run
 cargo run
@@ -33,8 +33,8 @@ cargo run
 
 ### 2. Find Something to Work On
 
-- **Browse issues**: Check [open issues](https://github.com/ORIGINAL_OWNER/nihonrs/issues)
-- **Good first issues**: Look for the [`good first issue`](https://github.com/ORIGINAL_OWNER/nihonrs/labels/good%20first%20issue) label
+- **Browse issues**: Check [open issues](https://github.com/karmakarmeghdip/nihon.rs/issues)
+- **Good first issues**: Look for the [`good first issue`](https://github.com/karmakarmeghdip/nihon.rs/labels/good%20first%20issue) label
 - **Ask questions**: Comment on an issue to clarify requirements
 - **Propose new features**: Open a discussion first to get feedback
 
@@ -286,7 +286,7 @@ Stuck? Here's how to get unstuck:
 
 1. **Read the docs**: Check README, SPEC.md, and inline comments
 2. **Search issues**: Someone might have had the same question
-3. **Ask in discussions**: Open a [discussion thread](https://github.com/ORIGINAL_OWNER/nihonrs/discussions)
+3. **Ask in discussions**: Open a [discussion thread](https://github.com/karmakarmeghdip/nihon.rs/discussions)
 4. **Comment on issues**: Ask for clarification on specific tasks
 5. **Join the conversation**: We're friendly and want to help!
 
