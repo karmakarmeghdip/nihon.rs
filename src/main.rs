@@ -4,5 +4,8 @@ mod views;
 use app::App;
 
 fn main() -> iced::Result {
-    iced::run(App::update, App::view)
+    iced::application(App::new, App::update, App::view)
+        .title(App::title)
+        .theme(App::theme)
+        .run()
 }

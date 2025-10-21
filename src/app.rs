@@ -18,6 +18,7 @@ pub struct App {
     pub practice_view: PracticeView,
     pub learning_view: LearningView,
     pub settings_view: SettingsView,
+    pub theme: iced::Theme,
 }
 
 #[derive(Debug, Clone)]
@@ -46,6 +47,7 @@ impl Default for App {
             practice_view: PracticeView::default(),
             learning_view: LearningView::default(),
             settings_view: SettingsView::default(),
+            theme: iced::Theme::CatppuccinMocha,
         }
     }
 }
@@ -62,6 +64,10 @@ impl App {
             AppMode::Learning => "NihonRS - Learning".to_string(),
             AppMode::Settings => "NihonRS - Settings".to_string(),
         }
+    }
+
+    pub fn theme(&self) -> iced::Theme {
+        self.theme.clone()
     }
 
     pub fn update(&mut self, message: Message) -> Task<Message> {
