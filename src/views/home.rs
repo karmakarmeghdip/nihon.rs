@@ -1,3 +1,4 @@
+use crate::styles;
 use iced::widget::{button, column, container, row, scrollable, text, text_input};
 use iced::{Alignment, Element, Fill, Length, Task};
 
@@ -80,7 +81,8 @@ impl HomeView {
         )
         .on_input(Message::InputChanged)
         .padding(15)
-        .size(16);
+        .size(16)
+        .style(styles::text_input_style);
 
         // Action buttons
         let buttons = row![
@@ -92,7 +94,8 @@ impl HomeView {
             )
             .on_press(Message::SubmitForPractice)
             .padding(15)
-            .width(Length::Fill),
+            .width(Length::Fill)
+            .style(styles::button_style),
             button(
                 text("Learning Mode")
                     .size(18)
@@ -101,7 +104,8 @@ impl HomeView {
             )
             .on_press(Message::SubmitForLearning)
             .padding(15)
-            .width(Length::Fill),
+            .width(Length::Fill)
+            .style(styles::button_style),
         ]
         .spacing(10)
         .width(Length::Fill);
@@ -137,7 +141,8 @@ impl HomeView {
         // Settings button
         let settings_button = button(text("⚙ Settings"))
             .on_press(Message::NavigateToSettings)
-            .padding(10);
+            .padding(10)
+            .style(styles::button_style);
 
         // Main layout
         let content = column![
@@ -179,7 +184,8 @@ impl HomeView {
 
         let open_button = button(text("Open"))
             .on_press(Message::SelectDeck(deck.id.clone()))
-            .padding(8);
+            .padding(8)
+            .style(styles::button_style);
 
         container(
             row![
@@ -191,7 +197,7 @@ impl HomeView {
             .padding(15),
         )
         .width(Length::Fill)
-        .style(container::rounded_box)
+        .style(styles::section_style)
         .into()
     }
 
@@ -204,7 +210,8 @@ impl HomeView {
 
         let open_button = button(text("Continue"))
             .on_press(Message::SelectText(text_info.id.clone()))
-            .padding(8);
+            .padding(8)
+            .style(styles::button_style);
 
         container(
             row![
@@ -216,7 +223,7 @@ impl HomeView {
             .padding(15),
         )
         .width(Length::Fill)
-        .style(container::rounded_box)
+        .style(styles::section_style)
         .into()
     }
 }

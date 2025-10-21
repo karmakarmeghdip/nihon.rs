@@ -1,4 +1,5 @@
 mod app;
+mod styles;
 mod views;
 
 use app::App;

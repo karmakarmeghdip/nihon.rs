@@ -19,6 +19,7 @@ pub struct App {
     pub learning_view: LearningView,
     pub settings_view: SettingsView,
     pub theme: iced::Theme,
+    pub dark_mode: bool,
 }
 
 #[derive(Debug, Clone)]
@@ -48,6 +49,7 @@ impl Default for App {
             learning_view: LearningView::default(),
             settings_view: SettingsView::default(),
             theme: iced::Theme::CatppuccinMocha,
+            dark_mode: true,
         }
     }
 }
@@ -73,13 +75,42 @@ impl App {
     pub fn update(&mut self, message: Message) -> Task<Message> {
         match message {
             Message::NavigateTo(mode) => {
+                if let AppMode::Settings = mode {
+                    self.settings_view.set_dark_mode(self.dark_mode);
+                }
                 self.mode = mode;
                 Task::none()
             }
-            Message::Home(msg) => self.home_view.update(msg).map(Message::Home),
+            Message::Home(msg) => match msg {
+                crate::views::home::Message::NavigateToSettings => {
+                    self.settings_view.set_dark_mode(self.dark_mode);
+                    self.mode = AppMode::Settings;
+                    Task::none()
+                }
+                _ => self.home_view.update(msg).map(Message::Home),
+            },
             Message::Practice(msg) => self.practice_view.update(msg).map(Message::Practice),
             Message::Learning(msg) => self.learning_view.update(msg).map(Message::Learning),
-            Message::Settings(msg) => self.settings_view.update(msg).map(Message::Settings),
+            Message::Settings(msg) => {
+                use crate::views::settings::Message as SettingsMessage;
+
+                let task = self
+                    .settings_view
+                    .update(msg.clone())
+                    .map(Message::Settings);
+
+                match msg {
+                    SettingsMessage::BackToHome => {
+                        self.mode = AppMode::Home;
+                        task
+                    }
+                    SettingsMessage::DarkModeChanged(enabled) => {
+                        self.apply_theme(enabled);
+                        task
+                    }
+                    _ => task,
+                }
+            }
         }
     }
 
@@ -97,5 +128,15 @@ impl App {
             .height(Length::Fill)
             .center_x(Fill)
             .into()
+    }
+
+    fn apply_theme(&mut self, dark_mode: bool) {
+        self.dark_mode = dark_mode;
+        self.theme = if dark_mode {
+            iced::Theme::CatppuccinMocha
+        } else {
+            iced::Theme::CatppuccinLatte
+        };
+        self.settings_view.set_dark_mode(dark_mode);
     }
 }

@@ -1,3 +1,4 @@
+use crate::styles;
 use iced::widget::{button, column, container, text};
 use iced::{Element, Length, Task};
 
@@ -25,7 +26,8 @@ impl LearningView {
             text("Learning mode coming soon...").size(16),
             button("Back to Home")
                 .on_press(Message::BackToHome)
-                .padding(10),
+                .padding(12)
+                .style(styles::button_style),
         ]
         .spacing(20)
         .padding(20);
