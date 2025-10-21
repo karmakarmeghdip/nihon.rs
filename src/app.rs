@@ -84,11 +84,18 @@ impl App {
     }
 
     pub fn view(&self) -> Element<'_, Message> {
-        match self.mode {
+        use iced::widget::container;
+        use iced::{Fill, Length};
+        let content = match self.mode {
             AppMode::Home => self.home_view.view().map(Message::Home),
             AppMode::Practice => self.practice_view.view().map(Message::Practice),
             AppMode::Learning => self.learning_view.view().map(Message::Learning),
             AppMode::Settings => self.settings_view.view().map(Message::Settings),
-        }
+        };
+        container(content)
+            .width(Length::Fill)
+            .height(Length::Fill)
+            .center_x(Fill)
+            .into()
     }
 }

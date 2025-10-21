@@ -159,12 +159,12 @@ impl HomeView {
         .spacing(10)
         .padding(20)
         .width(Length::Fill)
-        .max_width(1200);
+        .max_width(1200)
+        .align_x(Alignment::Center);
 
-        container(scrollable(content))
+        scrollable(container(content).width(Length::Fill).center_x(Fill))
             .width(Length::Fill)
             .height(Length::Fill)
-            .center_x(Fill)
             .into()
     }
 
