@@ -1,0 +1,40 @@
+use iced::widget::{button, column, container, text};
+use iced::{Element, Length, Task};
+
+#[derive(Default)]
+pub struct PracticeView {
+    // TODO: Add practice mode state
+}
+
+#[derive(Debug, Clone)]
+pub enum Message {
+    // TODO: Add practice mode messages
+    BackToHome,
+}
+
+impl PracticeView {
+    pub fn update(&mut self, message: Message) -> Task<Message> {
+        match message {
+            Message::BackToHome => Task::none(),
+        }
+    }
+
+    pub fn view(&self) -> Element<'_, Message> {
+        let content = column![
+            text("Practice Mode").size(32),
+            text("Practice mode coming soon...").size(16),
+            button("Back to Home")
+                .on_press(Message::BackToHome)
+                .padding(10),
+        ]
+        .spacing(20)
+        .padding(20);
+
+        container(content)
+            .width(Length::Fill)
+            .height(Length::Fill)
+            .center_x(Length::Fill)
+            .center_y(Length::Fill)
+            .into()
+    }
+}
