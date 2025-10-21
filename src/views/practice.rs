@@ -1,3 +1,10 @@
+//! Practice view - Flashcard-based spaced repetition practice
+//!
+//! This view will implement:
+//! - Flashcard display with vocabulary/grammar questions
+//! - SRS (Spaced Repetition System) algorithm
+//! - Answer feedback and grading
+
 use crate::styles;
 use iced::widget::{button, column, container, text};
 use iced::{Element, Length, Task};
@@ -14,6 +21,7 @@ pub enum Message {
 }
 
 impl PracticeView {
+    #[allow(dead_code)]
     pub fn update(&mut self, message: Message) -> Task<Message> {
         match message {
             Message::BackToHome => Task::none(),

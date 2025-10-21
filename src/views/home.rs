@@ -1,4 +1,14 @@
+//! Home view - Main landing page with text input and deck/text lists
+//!
+//! This view allows users to:
+//! - Input Japanese text for practice or learning
+//! - View and select existing decks
+//! - View and continue saved texts
+//! - Navigate to settings
+
+use crate::constants::ui;
 use crate::styles;
+use crate::types::{DeckInfo, TextInfo};
 use iced::widget::{button, column, container, row, scrollable, text, text_input};
 use iced::{Alignment, Element, Fill, Length, Task};
 
@@ -9,21 +19,11 @@ pub struct HomeView {
     saved_texts: Vec<TextInfo>,
 }
 
-#[derive(Debug, Clone)]
-pub struct DeckInfo {
-    pub id: String,
-    pub name: String,
-    pub total_cards: usize,
-    pub due_cards: usize,
-    pub new_cards: usize,
-}
-
-#[derive(Debug, Clone)]
-pub struct TextInfo {
-    pub id: String,
-    pub title: String,
-    pub preview: String,
-    pub created_at: String,
+impl HomeView {
+    /// Check if text input is valid (not empty)
+    fn has_valid_input(&self) -> bool {
+        !self.input_text.trim().is_empty()
+    }
 }
 
 #[derive(Debug, Clone)]
@@ -85,30 +85,41 @@ impl HomeView {
         .style(styles::text_input_style);
 
         // Action buttons
-        let buttons = row![
-            button(
-                text("Practice Mode")
-                    .size(18)
-                    .width(Length::Fill)
-                    .align_x(iced::alignment::Horizontal::Center)
-            )
-            .on_press(Message::SubmitForPractice)
-            .padding(15)
-            .width(Length::Fill)
-            .style(styles::button_style),
-            button(
-                text("Learning Mode")
-                    .size(18)
-                    .width(Length::Fill)
-                    .align_x(iced::alignment::Horizontal::Center)
-            )
-            .on_press(Message::SubmitForLearning)
-            .padding(15)
-            .width(Length::Fill)
-            .style(styles::button_style),
-        ]
-        .spacing(10)
-        .width(Length::Fill);
+        let practice_button = button(
+            text("Practice Mode")
+                .size(18)
+                .width(Length::Fill)
+                .align_x(iced::alignment::Horizontal::Center),
+        )
+        .padding(15)
+        .width(Length::Fill)
+        .style(styles::button_style);
+
+        let practice_button = if self.has_valid_input() {
+            practice_button.on_press(Message::SubmitForPractice)
+        } else {
+            practice_button
+        };
+
+        let learning_button = button(
+            text("Learning Mode")
+                .size(18)
+                .width(Length::Fill)
+                .align_x(iced::alignment::Horizontal::Center),
+        )
+        .padding(15)
+        .width(Length::Fill)
+        .style(styles::button_style);
+
+        let learning_button = if self.has_valid_input() {
+            learning_button.on_press(Message::SubmitForLearning)
+        } else {
+            learning_button
+        };
+
+        let buttons = row![practice_button, learning_button]
+            .spacing(10)
+            .width(Length::Fill);
 
         // Decks section
         let decks_title = text("Your Decks").size(24).width(Length::Fill);
@@ -164,7 +175,7 @@ impl HomeView {
         .spacing(10)
         .padding(20)
         .width(Length::Fill)
-        .max_width(1200)
+        .max_width(ui::MAX_CONTENT_WIDTH)
         .align_x(Alignment::Center);
 
         scrollable(container(content).width(Length::Fill).center_x(Fill))

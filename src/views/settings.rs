@@ -1,3 +1,13 @@
+//! Settings view - Application configuration and preferences
+//!
+//! Allows users to configure:
+//! - Theme (dark/light mode)
+//! - Font size
+//! - User profile for personalized AI responses
+//! - Gemini API key for LLM integration
+//! - SRS parameters (daily limits, new cards)
+
+use crate::constants::{srs, ui};
 use crate::styles;
 use iced::widget::{
     button, checkbox, column, container, row, scrollable, slider, text, text_input,
@@ -17,12 +27,12 @@ pub struct SettingsView {
 impl Default for SettingsView {
     fn default() -> Self {
         Self {
-            font_size: 18,
+            font_size: ui::DEFAULT_FONT_SIZE,
             dark_mode: true,
             user_profile: String::new(),
             api_key: String::new(),
-            daily_review_limit: String::from("20"),
-            new_cards_per_day: String::from("10"),
+            daily_review_limit: srs::DEFAULT_DAILY_REVIEW_LIMIT.to_string(),
+            new_cards_per_day: srs::DEFAULT_NEW_CARDS_PER_DAY.to_string(),
         }
     }
 }
@@ -47,7 +57,7 @@ impl SettingsView {
                 Task::none()
             }
             Message::FontSizeChanged(size) => {
-                self.font_size = size.clamp(12, 32);
+                self.font_size = size.clamp(ui::MIN_FONT_SIZE, ui::MAX_FONT_SIZE);
                 Task::none()
             }
             Message::UserProfileChanged(value) => {
@@ -87,9 +97,11 @@ impl SettingsView {
                     ]
                     .spacing(8)
                     .align_y(alignment::Vertical::Center),
-                    slider(12.0..=32.0, self.font_size as f32, |value| {
-                        Message::FontSizeChanged(value.round() as u16)
-                    })
+                    slider(
+                        ui::MIN_FONT_SIZE as f32..=ui::MAX_FONT_SIZE as f32,
+                        self.font_size as f32,
+                        |value| { Message::FontSizeChanged(value.round() as u16) }
+                    )
                     .style(styles::slider_style),
                 ]
                 .spacing(10),
@@ -176,7 +188,7 @@ impl SettingsView {
         ]
         .spacing(24)
         .padding(24)
-        .max_width(900)
+        .max_width(ui::MAX_SETTINGS_WIDTH)
         .align_x(alignment::Horizontal::Center);
 
         scrollable(

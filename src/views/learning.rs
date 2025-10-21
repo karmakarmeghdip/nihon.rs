@@ -1,3 +1,10 @@
+//! Learning view - Interactive text reading with AI assistance
+//!
+//! This view will implement:
+//! - Tokenized Japanese text display with furigana
+//! - Clickable words for AI-powered explanations
+//! - Context-aware grammar and vocabulary help
+
 use crate::styles;
 use iced::widget::{button, column, container, text};
 use iced::{Element, Length, Task};
@@ -14,6 +21,7 @@ pub enum Message {
 }
 
 impl LearningView {
+    #[allow(dead_code)]
     pub fn update(&mut self, message: Message) -> Task<Message> {
         match message {
             Message::BackToHome => Task::none(),

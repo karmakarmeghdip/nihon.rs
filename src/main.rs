@@ -1,5 +1,8 @@
 mod app;
+mod constants;
 mod styles;
+mod theme;
+mod types;
 mod views;
 
 use app::App;

@@ -1,3 +1,9 @@
+//! Custom widget styles using Catppuccin color palette
+//!
+//! This module provides shadcn-inspired styling functions for iced widgets.
+//! All styles are designed to work with both light (Latte) and dark (Mocha)
+//! Catppuccin themes.
+
 use iced::widget::{button, checkbox, container, slider, text_input};
 use iced::{Background, Border, Color, Shadow, Vector};
 

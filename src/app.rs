@@ -1,10 +1,17 @@
+//! Main application structure and message routing
+//!
+//! This module implements the root App following the Elm architecture pattern.
+//! It manages navigation between different modes (Home, Practice, Learning, Settings)
+//! and routes messages to the appropriate view handlers.
+
 use iced::{Element, Task};
 
+use crate::theme::AppTheme;
 use crate::views::{
     home::HomeView, learning::LearningView, practice::PracticeView, settings::SettingsView,
 };
 
-#[derive(Debug, Clone)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
 pub enum AppMode {
     Home,
     Practice,
@@ -13,20 +20,16 @@ pub enum AppMode {
 }
 
 pub struct App {
-    pub mode: AppMode,
-    pub home_view: HomeView,
-    pub practice_view: PracticeView,
-    pub learning_view: LearningView,
-    pub settings_view: SettingsView,
-    pub theme: iced::Theme,
-    pub dark_mode: bool,
+    mode: AppMode,
+    home_view: HomeView,
+    practice_view: PracticeView,
+    learning_view: LearningView,
+    settings_view: SettingsView,
+    theme: AppTheme,
 }
 
 #[derive(Debug, Clone)]
 pub enum Message {
-    // Navigation
-    NavigateTo(AppMode),
-
     // Home messages
     Home(crate::views::home::Message),
 
@@ -48,8 +51,7 @@ impl Default for App {
             practice_view: PracticeView::default(),
             learning_view: LearningView::default(),
             settings_view: SettingsView::default(),
-            theme: iced::Theme::CatppuccinMocha,
-            dark_mode: true,
+            theme: AppTheme::default(),
         }
     }
 }
@@ -69,48 +71,88 @@ impl App {
     }
 
     pub fn theme(&self) -> iced::Theme {
-        self.theme.clone()
+        self.theme.to_iced_theme()
     }
 
     pub fn update(&mut self, message: Message) -> Task<Message> {
         match message {
-            Message::NavigateTo(mode) => {
-                if let AppMode::Settings = mode {
-                    self.settings_view.set_dark_mode(self.dark_mode);
-                }
-                self.mode = mode;
+            Message::Home(msg) => self.handle_home_message(msg),
+            Message::Practice(msg) => self.handle_practice_message(msg),
+            Message::Learning(msg) => self.handle_learning_message(msg),
+            Message::Settings(msg) => self.handle_settings_message(msg),
+        }
+    }
+
+    fn navigate_to(&mut self, mode: AppMode) {
+        // Sync theme state when navigating to settings
+        if mode == AppMode::Settings {
+            self.settings_view.set_dark_mode(self.theme.is_dark());
+        }
+        self.mode = mode;
+    }
+
+    fn handle_home_message(&mut self, msg: crate::views::home::Message) -> Task<Message> {
+        use crate::views::home::Message as HomeMessage;
+
+        match msg {
+            HomeMessage::NavigateToSettings => {
+                self.navigate_to(AppMode::Settings);
                 Task::none()
             }
-            Message::Home(msg) => match msg {
-                crate::views::home::Message::NavigateToSettings => {
-                    self.settings_view.set_dark_mode(self.dark_mode);
-                    self.mode = AppMode::Settings;
-                    Task::none()
-                }
-                _ => self.home_view.update(msg).map(Message::Home),
-            },
-            Message::Practice(msg) => self.practice_view.update(msg).map(Message::Practice),
-            Message::Learning(msg) => self.learning_view.update(msg).map(Message::Learning),
-            Message::Settings(msg) => {
-                use crate::views::settings::Message as SettingsMessage;
-
-                let task = self
-                    .settings_view
-                    .update(msg.clone())
-                    .map(Message::Settings);
-
-                match msg {
-                    SettingsMessage::BackToHome => {
-                        self.mode = AppMode::Home;
-                        task
-                    }
-                    SettingsMessage::DarkModeChanged(enabled) => {
-                        self.apply_theme(enabled);
-                        task
-                    }
-                    _ => task,
-                }
+            HomeMessage::SubmitForPractice => {
+                // TODO: Process text and navigate to practice
+                self.navigate_to(AppMode::Practice);
+                Task::none()
             }
+            HomeMessage::SubmitForLearning => {
+                // TODO: Process text and navigate to learning
+                self.navigate_to(AppMode::Learning);
+                Task::none()
+            }
+            _ => self.home_view.update(msg).map(Message::Home),
+        }
+    }
+
+    fn handle_practice_message(&mut self, msg: crate::views::practice::Message) -> Task<Message> {
+        use crate::views::practice::Message as PracticeMessage;
+
+        match msg {
+            PracticeMessage::BackToHome => {
+                self.navigate_to(AppMode::Home);
+                Task::none()
+            }
+        }
+    }
+
+    fn handle_learning_message(&mut self, msg: crate::views::learning::Message) -> Task<Message> {
+        use crate::views::learning::Message as LearningMessage;
+
+        match msg {
+            LearningMessage::BackToHome => {
+                self.navigate_to(AppMode::Home);
+                Task::none()
+            }
+        }
+    }
+
+    fn handle_settings_message(&mut self, msg: crate::views::settings::Message) -> Task<Message> {
+        use crate::views::settings::Message as SettingsMessage;
+
+        let task = self
+            .settings_view
+            .update(msg.clone())
+            .map(Message::Settings);
+
+        match msg {
+            SettingsMessage::BackToHome => {
+                self.navigate_to(AppMode::Home);
+                task
+            }
+            SettingsMessage::DarkModeChanged(enabled) => {
+                self.apply_theme(enabled);
+                task
+            }
+            _ => task,
         }
     }
 
@@ -131,11 +173,10 @@ impl App {
     }
 
     fn apply_theme(&mut self, dark_mode: bool) {
-        self.dark_mode = dark_mode;
         self.theme = if dark_mode {
-            iced::Theme::CatppuccinMocha
+            AppTheme::Dark
         } else {
-            iced::Theme::CatppuccinLatte
+            AppTheme::Light
         };
         self.settings_view.set_dark_mode(dark_mode);
     }
