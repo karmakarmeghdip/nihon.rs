@@ -68,7 +68,7 @@ impl App {
     }
 
     pub fn theme(&self) -> iced::Theme {
-        crate::theme::get_theme()
+        crate::ui::theme::get_theme()
     }
 
     pub fn update(&mut self, message: Message) -> Task<Message> {
@@ -114,6 +114,7 @@ impl App {
                 self.navigate_to(AppMode::Home);
                 Task::none()
             }
+            _ => self.practice_view.update(msg).map(Message::Practice),
         }
     }
 
@@ -125,6 +126,7 @@ impl App {
                 self.navigate_to(AppMode::Home);
                 Task::none()
             }
+            _ => self.learning_view.update(msg).map(Message::Learning),
         }
     }
 

@@ -7,97 +7,14 @@
 //! - Furigana display and romaji toggle
 //! - Example sentences and JLPT level badges
 
+use crate::components::{jlpt_badge, QuizState};
 use crate::constants::ui;
-use crate::styles;
+use crate::models::{CardType, ExampleSentence, GrammarCard, JLPTLevel, VocabularyCard};
+use crate::ui::{button_style, section_style};
 use iced::widget::{button, column, container, row, scrollable, text, Space};
-use iced::{Alignment, Border, Color, Element, Fill, Length, Shadow, Task, Vector};
+use iced::{Alignment, Color, Element, Fill, Length, Task};
 
-/// Represents a single furigana span
-#[derive(Debug, Clone)]
-pub struct FuriganaSpan {
-    pub text: String,
-    pub reading: Option<String>,
-}
-
-/// JLPT difficulty levels
-#[derive(Debug, Clone, Copy, PartialEq, Eq)]
-pub enum JLPTLevel {
-    N5, // Beginner
-    N4,
-    N3, // Intermediate
-    N2,
-    N1, // Advanced
-    Unknown,
-}
-
-impl JLPTLevel {
-    pub fn as_str(&self) -> &str {
-        match self {
-            JLPTLevel::N5 => "N5",
-            JLPTLevel::N4 => "N4",
-            JLPTLevel::N3 => "N3",
-            JLPTLevel::N2 => "N2",
-            JLPTLevel::N1 => "N1",
-            JLPTLevel::Unknown => "?",
-        }
-    }
-
-    pub fn color(&self) -> Color {
-        match self {
-            JLPTLevel::N5 => Color::from_rgb(0.4, 0.8, 0.4), // Green
-            JLPTLevel::N4 => Color::from_rgb(0.6, 0.8, 0.4), // Light green
-            JLPTLevel::N3 => Color::from_rgb(0.9, 0.8, 0.3), // Yellow
-            JLPTLevel::N2 => Color::from_rgb(0.9, 0.6, 0.3), // Orange
-            JLPTLevel::N1 => Color::from_rgb(0.9, 0.3, 0.3), // Red
-            JLPTLevel::Unknown => Color::from_rgb(0.6, 0.6, 0.6), // Gray
-        }
-    }
-}
-
-/// Example sentence with Japanese and English
-#[derive(Debug, Clone)]
-pub struct ExampleSentence {
-    pub japanese: String,
-    pub english: String,
-}
-
-/// Type of flashcard
-#[derive(Debug, Clone)]
-pub enum CardType {
-    Vocabulary(VocabularyCard),
-    Grammar(GrammarCard),
-}
-
-/// Vocabulary flashcard
-#[derive(Debug, Clone)]
-pub struct VocabularyCard {
-    pub kanji: String,
-    pub hiragana: String,
-    pub romaji: String,
-    pub meaning: String,
-    pub wrong_answers: Vec<String>,
-    pub example_sentences: Vec<ExampleSentence>,
-    pub jlpt_level: JLPTLevel,
-}
-
-/// Grammar flashcard
-#[derive(Debug, Clone)]
-pub struct GrammarCard {
-    pub pattern: String,
-    pub pattern_reading: String,
-    pub explanation: String,
-    pub wrong_answers: Vec<String>,
-    pub example_sentences: Vec<ExampleSentence>,
-    pub jlpt_level: JLPTLevel,
-}
-
-/// State of the current quiz
-#[derive(Debug, Clone, PartialEq)]
-enum QuizState {
-    Question,
-    AnswerCorrect,
-    AnswerIncorrect { selected: usize, correct: usize },
-}
+// All types now imported from models and components modules
 
 pub struct PracticeView {
     cards: Vec<CardType>,
@@ -254,13 +171,13 @@ impl PracticeView {
 
         let content = column![
             self.header(),
-            Space::with_height(20),
+            Space::new().height(20),
             self.progress_bar(),
-            Space::with_height(20),
+            Space::new().height(20),
             self.card_display(current_card),
-            Space::with_height(20),
+            Space::new().height(20),
             self.quiz_section(current_card),
-            Space::with_height(20),
+            Space::new().height(20),
             self.navigation_controls(),
         ]
         .spacing(10)
@@ -280,11 +197,11 @@ impl PracticeView {
             text("Practice Mode").size(32),
             text("No cards to practice yet.").size(16),
             text("Go back to Home and create some flashcards from Japanese text!").size(14),
-            Space::with_height(20),
+            Space::new().height(20),
             button("Back to Home")
                 .on_press(Message::BackToHome)
                 .padding(12)
-                .style(styles::button_style),
+                .style(button_style),
         ]
         .spacing(20)
         .padding(20)
@@ -316,7 +233,7 @@ impl PracticeView {
         let back_button = button("← Back to Home")
             .on_press(Message::BackToHome)
             .padding(10)
-            .style(styles::button_style);
+            .style(button_style);
 
         row![
             column![title, stats].spacing(5).width(Length::Fill),
@@ -342,14 +259,14 @@ impl PracticeView {
             .into()
     }
 
-    fn card_display(&self, card: &CardType) -> Element<'_, Message> {
+    fn card_display<'a>(&'a self, card: &'a CardType) -> Element<'a, Message> {
         match card {
             CardType::Vocabulary(vocab) => self.vocabulary_card(vocab),
             CardType::Grammar(grammar) => self.grammar_card(grammar),
         }
     }
 
-    fn vocabulary_card(&self, card: &VocabularyCard) -> Element<'_, Message> {
+    fn vocabulary_card<'a>(&'a self, card: &'a VocabularyCard) -> Element<'a, Message> {
         let kanji_text = text(&card.kanji).size(48);
 
         let hiragana_text = text(&card.hiragana).size(20);
@@ -361,15 +278,15 @@ impl PracticeView {
                 button("Show Romaji")
                     .on_press(Message::ToggleRomaji)
                     .padding(8)
-                    .style(styles::button_style)
+                    .style(button_style)
             ]
         };
 
-        let jlpt_badge = self.jlpt_badge(card.jlpt_level);
+        let jlpt_badge_elem = jlpt_badge(card.jlpt_level);
 
         let card_content = column![
-            jlpt_badge,
-            Space::with_height(10),
+            jlpt_badge_elem,
+            Space::new().height(10),
             kanji_text,
             hiragana_text,
             romaji_section,
@@ -381,20 +298,20 @@ impl PracticeView {
         container(card_content)
             .padding(30)
             .width(Length::Fill)
-            .style(styles::section_style)
+            .style(section_style)
             .into()
     }
 
-    fn grammar_card(&self, card: &GrammarCard) -> Element<'_, Message> {
+    fn grammar_card<'a>(&'a self, card: &'a GrammarCard) -> Element<'a, Message> {
         let pattern_text = text(&card.pattern).size(48);
 
         let reading_text = text(&card.pattern_reading).size(20);
 
-        let jlpt_badge = self.jlpt_badge(card.jlpt_level);
+        let jlpt_badge_elem = jlpt_badge(card.jlpt_level);
 
         let card_content = column![
-            jlpt_badge,
-            Space::with_height(10),
+            jlpt_badge_elem,
+            Space::new().height(10),
             text("Grammar Pattern").size(14),
             pattern_text,
             reading_text,
@@ -406,31 +323,14 @@ impl PracticeView {
         container(card_content)
             .padding(30)
             .width(Length::Fill)
-            .style(styles::section_style)
+            .style(section_style)
             .into()
     }
 
-    fn jlpt_badge(&self, level: JLPTLevel) -> Element<'_, Message> {
-        let badge_text = text(level.as_str()).size(12);
 
-        container(badge_text)
-            .padding([4, 12])
-            .style(move |theme: &iced::Theme| {
-                let mut style = styles::section_style(theme);
-                style.background = Some(level.color().into());
-                style.text_color = Some(Color::WHITE);
-                style.border = Border {
-                    radius: iced::border::Radius::from(12.0),
-                    ..Default::default()
-                };
-                style.shadow = Shadow::default();
-                style
-            })
-            .into()
-    }
 
-    fn quiz_section(&self, card: &CardType) -> Element<'_, Message> {
-        let question = text("What does this mean?").size(18);
+    fn quiz_section<'a>(&'a self, card: &'a CardType) -> Element<'a, Message> {
+        let question: Element<'a, Message> = text("What does this mean?").size(18).into();
 
         let (correct_answer, wrong_answers) = match card {
             CardType::Vocabulary(vocab) => (&vocab.meaning, &vocab.wrong_answers),
@@ -441,15 +341,15 @@ impl PracticeView {
         let mut all_answers = vec![correct_answer.clone()];
         all_answers.extend(wrong_answers.iter().cloned());
 
-        let answer_buttons = all_answers
-            .iter()
+        let answer_button_elements: Vec<Element<'a, Message>> = all_answers
+            .into_iter()
             .enumerate()
-            .fold(column![].spacing(10), |col, (idx, answer)| {
-                let button_style = match &self.quiz_state {
-                    QuizState::Question => styles::button_style,
+            .map(|(idx, answer)| {
+                let button_style_fn = match &self.quiz_state {
+                    QuizState::Question => button_style,
                     QuizState::AnswerCorrect if idx == 0 => {
                         |theme: &iced::Theme, status| {
-                            let mut style = styles::button_style(theme, status);
+                            let mut style = button_style(theme, status);
                             style.background = Some(Color::from_rgb(0.2, 0.8, 0.2).into());
                             style
                         }
@@ -457,21 +357,21 @@ impl PracticeView {
                     QuizState::AnswerIncorrect { selected, correct } => {
                         if idx == *selected {
                             |theme: &iced::Theme, status| {
-                                let mut style = styles::button_style(theme, status);
+                                let mut style = button_style(theme, status);
                                 style.background = Some(Color::from_rgb(0.8, 0.2, 0.2).into());
                                 style
                             }
                         } else if idx == *correct {
                             |theme: &iced::Theme, status| {
-                                let mut style = styles::button_style(theme, status);
+                                let mut style = button_style(theme, status);
                                 style.background = Some(Color::from_rgb(0.2, 0.8, 0.2).into());
                                 style
                             }
                         } else {
-                            styles::button_style
+                            button_style
                         }
                     }
-                    _ => styles::button_style,
+                    _ => button_style,
                 };
 
                 let btn = button(
@@ -482,7 +382,7 @@ impl PracticeView {
                 )
                 .padding(15)
                 .width(Length::Fill)
-                .style(button_style);
+                .style(button_style_fn);
 
                 let btn = if self.quiz_state == QuizState::Question {
                     btn.on_press(Message::SelectAnswer(idx))
@@ -490,8 +390,11 @@ impl PracticeView {
                     btn
                 };
 
-                col.push(btn)
-            });
+                btn.into()
+            })
+            .collect();
+
+        let answer_buttons: Element<'a, Message> = column(answer_button_elements).spacing(10).into();
 
         let examples_section = if self.quiz_state != QuizState::Question {
             let examples = match card {
@@ -511,23 +414,23 @@ impl PracticeView {
                 );
 
                 column![
-                    Space::with_height(20),
+                    Space::new().height(20),
                     button("Hide Examples")
                         .on_press(Message::ToggleExamples)
                         .padding(10)
-                        .style(styles::button_style),
+                        .style(button_style),
                     container(examples_list)
                         .padding(15)
                         .width(Length::Fill)
-                        .style(styles::section_style),
+                        .style(section_style),
                 ]
             } else {
                 column![
-                    Space::with_height(20),
+                    Space::new().height(20),
                     button("Show Example Sentences")
                         .on_press(Message::ToggleExamples)
                         .padding(10)
-                        .style(styles::button_style),
+                        .style(button_style),
                 ]
             }
         } else {
@@ -542,7 +445,7 @@ impl PracticeView {
     fn navigation_controls(&self) -> Element<'_, Message> {
         let prev_button = button("← Previous")
             .padding(12)
-            .style(styles::button_style);
+            .style(button_style);
 
         let prev_button = if self.current_index > 0 {
             prev_button.on_press(Message::PreviousCard)
@@ -552,7 +455,7 @@ impl PracticeView {
 
         let next_button = button("Next →")
             .padding(12)
-            .style(styles::button_style);
+            .style(button_style);
 
         let next_button = if self.current_index < self.cards.len() - 1
             && self.quiz_state != QuizState::Question
@@ -562,7 +465,7 @@ impl PracticeView {
             next_button
         };
 
-        row![prev_button, Space::with_width(Fill), next_button]
+        row![prev_button, Space::new().width(Fill), next_button]
             .spacing(10)
             .width(Length::Fill)
             .into()

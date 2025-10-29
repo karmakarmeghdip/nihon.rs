@@ -1,8 +1,10 @@
 mod app;
+mod components;
 mod constants;
-mod styles;
-mod theme;
-mod types;
+mod error;
+mod models;
+mod services;
+mod ui;
 mod views;
 
 use app::App;

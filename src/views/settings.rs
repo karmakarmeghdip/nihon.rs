@@ -8,7 +8,7 @@
 //! - SRS parameters (daily limits, new cards)
 
 use crate::constants::{srs, ui};
-use crate::styles;
+use crate::ui::{button_style, section_style, slider_style, text_input_style};
 use iced::widget::{button, column, container, row, scrollable, slider, text, text_input};
 use iced::{Element, Length, Task, alignment};
 
@@ -86,14 +86,14 @@ impl SettingsView {
                         self.font_size as f32,
                         |value| { Message::FontSizeChanged(value.round() as u16) }
                     )
-                    .style(styles::slider_style),
+                    .style(slider_style),
                 ]
                 .spacing(10),
             ]
             .spacing(16),
         )
         .padding(20)
-        .style(styles::section_style);
+        .style(section_style);
 
         let profile_section = container(
             column![
@@ -104,12 +104,12 @@ impl SettingsView {
                     .padding(12)
                     .size(16)
                     .width(Length::Fill)
-                    .style(styles::text_input_style),
+                    .style(text_input_style),
             ]
             .spacing(12),
         )
         .padding(20)
-        .style(styles::section_style);
+        .style(section_style);
 
         let llm_section = container(
             column![
@@ -121,12 +121,12 @@ impl SettingsView {
                     .size(16)
                     .secure(true)
                     .width(Length::Fill)
-                    .style(styles::text_input_style),
+                    .style(text_input_style),
             ]
             .spacing(12),
         )
         .padding(20)
-        .style(styles::section_style);
+        .style(section_style);
 
         let srs_section = container(
             column![
@@ -137,7 +137,7 @@ impl SettingsView {
                         .on_input(Message::DailyReviewLimitChanged)
                         .padding(10)
                         .width(Length::Fixed(100.0))
-                        .style(styles::text_input_style),
+                        .style(text_input_style),
                 ]
                 .spacing(12)
                 .align_y(alignment::Vertical::Center),
@@ -147,7 +147,7 @@ impl SettingsView {
                         .on_input(Message::NewCardsPerDayChanged)
                         .padding(10)
                         .width(Length::Fixed(100.0))
-                        .style(styles::text_input_style),
+                        .style(text_input_style),
                 ]
                 .spacing(12)
                 .align_y(alignment::Vertical::Center),
@@ -155,7 +155,7 @@ impl SettingsView {
             .spacing(16),
         )
         .padding(20)
-        .style(styles::section_style);
+        .style(section_style);
 
         let content = column![
             text("Settings").size(32),
@@ -168,7 +168,7 @@ impl SettingsView {
                 .on_press(Message::BackToHome)
                 .padding(12)
                 .width(Length::Shrink)
-                .style(styles::button_style),
+                .style(button_style),
         ]
         .spacing(24)
         .padding(24)

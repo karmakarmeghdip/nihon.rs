@@ -8,36 +8,12 @@
 //! - Add words to flashcards functionality
 
 use crate::constants::ui;
-use crate::styles;
+use crate::models::{ExampleSentence, WordExplanation, WordSegment};
+use crate::ui::{button_style, section_style, text_input_style};
 use iced::widget::{
     button, column, container, row, scrollable, text, text_input, Space,
 };
 use iced::{Alignment, Color, Element, Fill, Length, Task};
-
-/// A parsed word segment from Japanese text
-#[derive(Debug, Clone)]
-pub struct WordSegment {
-    pub surface: String,      // Original text (kanji/kana)
-    pub reading: String,      // Hiragana reading
-    pub base_form: String,    // Dictionary form
-    pub explanation: Option<WordExplanation>,
-    pub is_selected: bool,
-}
-
-/// LLM-generated explanation for a word
-#[derive(Debug, Clone)]
-pub struct WordExplanation {
-    pub meaning: String,
-    pub grammar_notes: Option<String>,
-    pub examples: Vec<ExampleSentence>,
-    pub jlpt_level: String,
-}
-
-#[derive(Debug, Clone)]
-pub struct ExampleSentence {
-    pub japanese: String,
-    pub english: String,
-}
 
 /// Loading state for LLM explanation
 #[derive(Debug, Clone, PartialEq)]
@@ -172,8 +148,9 @@ impl LearningView {
                         self.loading_state = LoadingState::Loading;
                         // TODO: In real implementation, spawn async task to call LLM
                         // For now, simulate with sample data
+                        let surface = segment.surface.clone();
                         return Task::done(Message::ExplanationReceived(
-                            self.generate_sample_explanation(&segment.surface),
+                            self.generate_sample_explanation(&surface),
                         ));
                     } else {
                         self.loading_state = LoadingState::Loaded;
@@ -247,7 +224,7 @@ impl LearningView {
             }
             
             Message::QuestionAnswered(answer) => {
-                if let Some((question, _)) = self.qa_history.last() {
+                if let Some((_question, _)) = self.qa_history.last() {
                     // Update the last Q&A pair
                     if let Some(last) = self.qa_history.last_mut() {
                         last.1 = answer;
@@ -283,11 +260,11 @@ impl LearningView {
 
         let content = column![
             self.header(),
-            Space::with_height(20),
+            Space::new().height(20),
             self.word_segments_display(),
-            Space::with_height(20),
+            Space::new().height(20),
             self.explanation_panel(),
-            Space::with_height(20),
+            Space::new().height(20),
             self.question_section(),
         ]
         .spacing(10)
@@ -307,11 +284,11 @@ impl LearningView {
             text("Learning Mode").size(32),
             text("No text to learn yet.").size(16),
             text("Go back to Home and paste Japanese text to start learning!").size(14),
-            Space::with_height(20),
+            Space::new().height(20),
             button("Back to Home")
                 .on_press(Message::BackToHome)
                 .padding(12)
-                .style(styles::button_style),
+                .style(button_style),
         ]
         .spacing(20)
         .padding(20)
@@ -333,7 +310,7 @@ impl LearningView {
         let back_button = button("← Back to Home")
             .on_press(Message::BackToHome)
             .padding(10)
-            .style(styles::button_style);
+            .style(button_style);
 
         row![
             column![title, subtitle].spacing(5).width(Length::Fill),
@@ -347,13 +324,14 @@ impl LearningView {
     fn word_segments_display(&self) -> Element<'_, Message> {
         let title = text("Japanese Text").size(20);
 
-        let words_row = self.word_segments.iter().enumerate().fold(
-            row![].spacing(5).wrap(),
-            |row_widget, (idx, segment)| {
+        let word_buttons: Vec<Element<'_, Message>> = self.word_segments
+            .iter()
+            .enumerate()
+            .map(|(idx, segment)| {
                 let is_selected = segment.is_selected;
                 let has_explanation = segment.explanation.is_some();
 
-                let word_button = button(
+                button(
                     column![
                         text(&segment.surface).size(24),
                         text(&segment.reading).size(12),
@@ -364,31 +342,32 @@ impl LearningView {
                 .on_press(Message::SelectWord(idx))
                 .padding(10)
                 .style(move |theme: &iced::Theme, status| {
-                    let mut style = styles::button_style(theme, status);
+                    let mut style = button_style(theme, status);
                     if is_selected {
                         style.background = Some(Color::from_rgb(0.3, 0.5, 0.8).into());
                     } else if has_explanation {
                         style.background = Some(Color::from_rgb(0.4, 0.7, 0.4).into());
                     }
                     style
-                });
+                })
+                .into()
+            })
+            .collect();
 
-                row_widget.push(word_button)
-            },
-        );
+        let words_row = row(word_buttons).spacing(5).wrap();
 
         let legend = row![
             container(text("● Selected").size(12))
                 .padding([5, 10])
                 .style(|theme: &iced::Theme| {
-                    let mut style = styles::section_style(theme);
+                    let mut style = section_style(theme);
                     style.background = Some(Color::from_rgb(0.3, 0.5, 0.8).into());
                     style
                 }),
             container(text("● Has Explanation").size(12))
                 .padding([5, 10])
                 .style(|theme: &iced::Theme| {
-                    let mut style = styles::section_style(theme);
+                    let mut style = section_style(theme);
                     style.background = Some(Color::from_rgb(0.4, 0.7, 0.4).into());
                     style
                 }),
@@ -396,11 +375,11 @@ impl LearningView {
         .spacing(10);
 
         container(
-            column![title, words_row, Space::with_height(10), legend].spacing(15),
+            column![title, words_row, Space::new().height(10), legend].spacing(15),
         )
         .padding(20)
         .width(Length::Fill)
-        .style(styles::section_style)
+        .style(section_style)
         .into()
     }
 
@@ -427,7 +406,7 @@ impl LearningView {
                         .padding(30)
                         .width(Length::Fill)
                         .center_x(Fill)
-                        .style(styles::section_style)
+                        .style(section_style)
                         .into()
                     }
                     LoadingState::Loaded => {
@@ -452,7 +431,7 @@ impl LearningView {
                         .padding(20)
                         .width(Length::Fill)
                         .style(|theme: &iced::Theme| {
-                            let mut style = styles::section_style(theme);
+                            let mut style = section_style(theme);
                             style.background = Some(Color::from_rgb(0.8, 0.3, 0.3).into());
                             style
                         })
@@ -469,123 +448,116 @@ impl LearningView {
             .into()
     }
 
-    fn display_explanation(
-        &self,
-        segment: &WordSegment,
-        explanation: &WordExplanation,
-    ) -> Element<'_, Message> {
-        let word_display = column![
+    fn display_explanation<'a>(
+        &'a self,
+        segment: &'a WordSegment,
+        explanation: &'a WordExplanation,
+    ) -> Element<'a, Message> {
+        let word_display: Element<'_, Message> = column![
             text(&segment.surface).size(32),
             text(&segment.reading).size(18),
             text(format!("Dictionary form: {}", segment.base_form)).size(14),
         ]
         .spacing(5)
-        .align_x(Alignment::Center);
+        .align_x(Alignment::Center)
+        .into();
 
-        let jlpt_badge = container(text(&explanation.jlpt_level).size(12))
+        let jlpt_badge: Element<'_, Message> = container(text(&explanation.jlpt_level).size(12))
             .padding([4, 12])
             .style(|theme: &iced::Theme| {
-                let mut style = styles::section_style(theme);
+                let mut style = section_style(theme);
                 style.background = Some(Color::from_rgb(0.4, 0.6, 0.8).into());
                 style.text_color = Some(Color::WHITE);
                 style
-            });
+            })
+            .into();
 
-        let meaning = column![
+        let meaning: Element<'_, Message> = column![
             text("Meaning:").size(16),
             text(&explanation.meaning).size(14),
         ]
-        .spacing(5);
+        .spacing(5)
+        .into();
 
-        let grammar_section = if let Some(grammar) = &explanation.grammar_notes {
-            column![
-                Space::with_height(10),
-                text("Grammar Notes:").size(16),
-                text(grammar).size(14),
-            ]
-            .spacing(5)
-        } else {
-            column![]
-        };
+        let mut grammar_elements: Vec<Element<'_, Message>> = Vec::new();
+        if let Some(grammar) = &explanation.grammar_notes {
+            grammar_elements.push(Space::new().height(10).into());
+            grammar_elements.push(text("Grammar Notes:").size(16).into());
+            grammar_elements.push(text(grammar).size(14).into());
+        }
+        let grammar_section: Element<'_, Message> = column(grammar_elements).spacing(5).into();
 
-        let examples_section = if !explanation.examples.is_empty() {
-            let examples_list = explanation.examples.iter().fold(
-                column![].spacing(10),
-                |col, example| {
-                    col.push(
-                        container(
-                            column![
-                                text(&example.japanese).size(14),
-                                text(&example.english).size(12),
-                            ]
-                            .spacing(5),
-                        )
-                        .padding(10)
-                        .width(Length::Fill)
-                        .style(|theme: &iced::Theme| {
-                            let palette = theme.extended_palette();
-                            let mut style = styles::section_style(theme);
-                            style.background =
-                                Some(palette.background.weak.color.into());
-                            style
-                        }),
-                    )
-                },
-            );
+        let mut examples_elements: Vec<Element<'_, Message>> = Vec::new();
+        if !explanation.examples.is_empty() {
+            examples_elements.push(Space::new().height(10).into());
+            examples_elements.push(text("Example Sentences:").size(16).into());
+            
+            for example in &explanation.examples {
+                let example_container = container(
+                    column![
+                        text(&example.japanese).size(14),
+                        text(&example.english).size(12),
+                    ]
+                    .spacing(5),
+                )
+                .padding(10)
+                .width(Length::Fill)
+                .style(|theme: &iced::Theme| {
+                    let palette = theme.extended_palette();
+                    let mut style = section_style(theme);
+                    style.background = Some(palette.background.weak.color.into());
+                    style
+                });
+                examples_elements.push(example_container.into());
+            }
+        }
+        let examples_section: Element<'_, Message> = column(examples_elements).spacing(10).into();
 
-            column![
-                Space::with_height(10),
-                text("Example Sentences:").size(16),
-                examples_list,
-            ]
-            .spacing(10)
-        } else {
-            column![]
-        };
-
-        let action_buttons = row![
+        let action_buttons: Element<'_, Message> = row![
             button("Add to Vocabulary")
                 .on_press(Message::AddToVocabularyFlashcards)
                 .padding(10)
-                .style(styles::button_style),
+                .style(button_style),
             button("Add to Grammar")
                 .on_press(Message::AddToGrammarFlashcards)
                 .padding(10)
-                .style(styles::button_style),
+                .style(button_style),
         ]
-        .spacing(10);
+        .spacing(10)
+        .into();
 
-        let navigation = row![
+        let navigation: Element<'_, Message> = row![
             button("← Previous")
                 .padding(10)
-                .style(styles::button_style)
+                .style(button_style)
                 .on_press(Message::PreviousWord),
-            Space::with_width(Fill),
+            Space::new().width(Fill),
             button("Next →")
                 .padding(10)
-                .style(styles::button_style)
+                .style(button_style)
                 .on_press(Message::NextWord),
         ]
-        .width(Length::Fill);
+        .width(Length::Fill)
+        .into();
 
         container(
-            column![
+            column(vec![
                 jlpt_badge,
                 word_display,
-                Space::with_height(15),
+                Space::new().height(15).into(),
                 meaning,
                 grammar_section,
                 examples_section,
-                Space::with_height(20),
+                Space::new().height(20).into(),
                 action_buttons,
-                Space::with_height(10),
+                Space::new().height(10).into(),
                 navigation,
-            ]
+            ])
             .spacing(10),
         )
         .padding(20)
         .width(Length::Fill)
-        .style(styles::section_style)
+        .style(section_style)
         .into()
     }
 
@@ -599,11 +571,11 @@ impl LearningView {
         .on_input(Message::QuestionInputChanged)
         .padding(12)
         .size(14)
-        .style(styles::text_input_style);
+        .style(text_input_style);
 
         let ask_button = button("Ask")
             .padding(12)
-            .style(styles::button_style);
+            .style(button_style);
 
         let ask_button = if !self.question_input.trim().is_empty() {
             ask_button.on_press(Message::AskQuestion)
@@ -628,7 +600,7 @@ impl LearningView {
                             .width(Length::Fill)
                             .style(|theme: &iced::Theme| {
                                 let palette = theme.extended_palette();
-                                let mut style = styles::section_style(theme);
+                                let mut style = section_style(theme);
                                 style.background =
                                     Some(palette.background.weak.color.into());
                                 style
@@ -636,7 +608,7 @@ impl LearningView {
                         )
                     });
 
-            column![Space::with_height(15), history_list].spacing(10)
+            column![Space::new().height(15), history_list].spacing(10)
         } else {
             column![]
         };
@@ -651,7 +623,7 @@ impl LearningView {
         )
         .padding(20)
         .width(Length::Fill)
-        .style(styles::section_style)
+        .style(section_style)
         .into()
     }
 

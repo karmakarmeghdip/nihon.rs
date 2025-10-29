@@ -6,9 +6,9 @@
 //! - View and continue saved texts
 //! - Navigate to settings
 
-use crate::constants::ui;
-use crate::styles;
-use crate::types::{DeckInfo, TextInfo};
+use crate::constants;
+use crate::models::{DeckInfo, TextInfo};
+use crate::ui::{button_style, section_style, text_input_style};
 use iced::widget::{button, column, container, row, scrollable, text, text_input};
 use iced::{Alignment, Element, Fill, Length, Task};
 
@@ -82,7 +82,7 @@ impl HomeView {
         .on_input(Message::InputChanged)
         .padding(15)
         .size(16)
-        .style(styles::text_input_style);
+        .style(text_input_style);
 
         // Action buttons
         let practice_button = button(
@@ -93,7 +93,7 @@ impl HomeView {
         )
         .padding(15)
         .width(Length::Fill)
-        .style(styles::button_style);
+        .style(button_style);
 
         let practice_button = if self.has_valid_input() {
             practice_button.on_press(Message::SubmitForPractice)
@@ -109,7 +109,7 @@ impl HomeView {
         )
         .padding(15)
         .width(Length::Fill)
-        .style(styles::button_style);
+        .style(button_style);
 
         let learning_button = if self.has_valid_input() {
             learning_button.on_press(Message::SubmitForLearning)
@@ -150,7 +150,7 @@ impl HomeView {
         let settings_button = button("Settings")
             .on_press(Message::NavigateToSettings)
             .padding(10)
-            .style(styles::button_style);
+            .style(button_style);
 
         // Main layout
         let content = column![
@@ -172,7 +172,7 @@ impl HomeView {
         .spacing(10)
         .padding(20)
         .width(Length::Fill)
-        .max_width(ui::MAX_CONTENT_WIDTH)
+        .max_width(constants::ui::MAX_CONTENT_WIDTH)
         .align_x(Alignment::Center);
 
         scrollable(container(content).width(Length::Fill).center_x(Fill))
@@ -193,7 +193,7 @@ impl HomeView {
         let open_button = button(text("Open"))
             .on_press(Message::SelectDeck(deck.id.clone()))
             .padding(8)
-            .style(styles::button_style);
+            .style(button_style);
 
         container(
             row![
@@ -205,7 +205,7 @@ impl HomeView {
             .padding(15),
         )
         .width(Length::Fill)
-        .style(styles::section_style)
+        .style(section_style)
         .into()
     }
 
@@ -219,7 +219,7 @@ impl HomeView {
         let open_button = button(text("Continue"))
             .on_press(Message::SelectText(text_info.id.clone()))
             .padding(8)
-            .style(styles::button_style);
+            .style(button_style);
 
         container(
             row![
@@ -231,7 +231,7 @@ impl HomeView {
             .padding(15),
         )
         .width(Length::Fill)
-        .style(styles::section_style)
+        .style(section_style)
         .into()
     }
 }
