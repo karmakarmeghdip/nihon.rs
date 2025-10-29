@@ -66,7 +66,7 @@ impl HomeView {
     }
 
     pub fn view(&self) -> Element<'_, Message> {
-        let title = text("NihonRS - Japanese Learning Tool")
+        let title = text("nihon.rs - Japanese Learning Tool")
             .size(32)
             .width(Length::Fill);
 
@@ -147,7 +147,7 @@ impl HomeView {
         };
 
         // Settings button
-        let settings_button = button(text("⚙ Settings"))
+        let settings_button = button("Settings")
             .on_press(Message::NavigateToSettings)
             .padding(10)
             .style(styles::button_style);
