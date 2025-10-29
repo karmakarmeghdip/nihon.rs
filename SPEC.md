@@ -5,6 +5,17 @@ nihon.rs is a Japanese language learning application built with Rust and iced-rs
 
 ---
 
+## Documentation Organization
+
+All technical documentation, guides, and references are stored in the `docs/` directory:
+- `docs/DATABASE_INTEGRATION.md` - Native DB integration guide
+- `docs/INTEGRATION_SUMMARY.md` - Quick start for database integration
+- Future: `docs/LLM_INTEGRATION.md`, `docs/TOKENIZER_GUIDE.md`, etc.
+
+Root-level files are reserved for project meta-documentation (README, SPEC, CONTRIBUTING).
+
+---
+
 ## Core Technologies
 
 ### Framework & Architecture

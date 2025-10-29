@@ -170,6 +170,23 @@ Currently no tests implemented. When adding:
 - Integration tests: `tests/` directory
 - Run: `cargo test`
 
+## Documentation Organization
+
+**All documentation must be placed in the `docs/` folder:**
+- Technical guides: `docs/GUIDE_NAME.md`
+- API documentation: `docs/API_NAME.md`
+- Integration guides: `docs/INTEGRATION_NAME.md`
+- Architecture docs: `docs/ARCHITECTURE.md`
+- Any other documentation files
+
+**Root-level docs are reserved for:**
+- `README.md` - Project overview
+- `SPEC.md` - Project specification
+- `CONTRIBUTING.md` - Contribution guidelines
+- `Cargo.toml`, `Cargo.lock` - Package manifests
+
+When creating new documentation (guides, tutorials, references), always place them in `docs/` and reference them from README.md if needed.
+
 ## Project Status
 **MVP Phase 1**: Basic UI skeleton is complete
 - Home view with text input and deck/text lists ✓
@@ -180,7 +197,7 @@ Currently no tests implemented. When adding:
 - Integrate `lindera` for tokenization
 - Set up LLM integration with `rig` + Gemini
 - Implement flashcard UI and SRS algorithm
-- Add `native_db` persistence layer
+- Add `native_db` persistence layer ✓
 
 ## Design Decisions
 - **Navigation**: All non-home views include "Back to Home" button (desktop app, no browser navigation)

@@ -1,16 +1,17 @@
 //! Word and language-related data models
 
 use iced::Color;
+use serde::{Deserialize, Serialize};
 
 /// Example sentence with Japanese and English
-#[derive(Debug, Clone)]
+#[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct ExampleSentence {
     pub japanese: String,
     pub english: String,
 }
 
 /// JLPT difficulty levels
-#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Serialize, Deserialize)]
 pub enum JLPTLevel {
     N5, // Beginner
     N4,
@@ -57,7 +58,7 @@ impl JLPTLevel {
 }
 
 /// A parsed word segment from Japanese text
-#[derive(Debug, Clone)]
+#[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct WordSegment {
     pub surface: String,      // Original text (kanji/kana)
     pub reading: String,      // Hiragana reading
@@ -67,7 +68,7 @@ pub struct WordSegment {
 }
 
 /// LLM-generated explanation for a word
-#[derive(Debug, Clone)]
+#[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct WordExplanation {
     pub meaning: String,
     pub grammar_notes: Option<String>,
@@ -76,7 +77,7 @@ pub struct WordExplanation {
 }
 
 /// Represents a single furigana span
-#[derive(Debug, Clone)]
+#[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct FuriganaSpan {
     pub text: String,
     pub reading: Option<String>,

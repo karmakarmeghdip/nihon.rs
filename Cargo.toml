@@ -5,3 +5,8 @@ edition = "2024"
 
 [dependencies]
 iced = { git = "https://github.com/iced-rs/iced" }
+native_db = "0.8.2"
+native_model = "0.4.20"
+serde = { version = "1.0", features = ["derive"] }
+once_cell = "1.20"
+chrono = { version = "0.4", features = ["serde"] }

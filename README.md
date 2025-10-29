@@ -191,7 +191,17 @@ We follow standard Rust conventions:
 
 ## 📖 Documentation
 
+### Main Documentation
 - **[SPEC.md](SPEC.md)** - Comprehensive project specification with architecture details
+- **[CONTRIBUTING.md](CONTRIBUTING.md)** - Contribution guidelines and workflow
+
+### Technical Guides (`docs/`)
+- **[docs/DATABASE_INTEGRATION.md](docs/DATABASE_INTEGRATION.md)** - Native DB integration guide
+- **[docs/INTEGRATION_SUMMARY.md](docs/INTEGRATION_SUMMARY.md)** - Quick start for database integration
+- **[docs/ARCHITECTURE.md](docs/ARCHITECTURE.md)** - System architecture overview
+- **[docs/CODE_ORGANIZATION.md](docs/CODE_ORGANIZATION.md)** - Project structure and conventions
+
+### Development Resources
 - **[.github/copilot-instructions.md](.github/copilot-instructions.md)** - AI agent guidelines (useful for understanding project patterns)
 - **Inline docs** - Run `cargo doc --open` to browse all code documentation
 
